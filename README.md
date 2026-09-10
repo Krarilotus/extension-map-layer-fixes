@@ -2,6 +2,28 @@
 
 Repairs native map connectivity without replacing the game's pathfinder.
 
+**Experimental preview for Crusader 1.41 and Extreme 1.41 with UCP3 3.0.7
+or later.** Native automated checks pass; live gameplay and multiplayer
+validation are still pending.
+
+## Install and try it
+
+1. Download `map-layer-fixes-0.1.1.zip` from the newest
+   [PR preview release](https://github.com/Krarilotus/extension-map-layer-fixes/releases).
+   Use the module ZIP, not GitHub's source-code archive.
+2. Import the ZIP with the UCP launcher’s **+** button, enable **Map Layer Fixes**,
+   and save your configuration. Close and relaunch the game to apply it.
+3. For multiplayer, install the same version on every PC and use matching settings.
+   Record new replays with this setup; keep the original setup for old recordings.
+
+There are no additional options or in-game buttons. The launcher description is
+available in English, German, French, Russian, Hungarian, Turkish, Chinese,
+Spanish, and Persian. These previews are not yet part of the public extension store.
+
+See [the short test plan](docs/testing.md) before testing an existing save.
+
+## What it fixes
+
 The first fix makes the region rebuild read complete region IDs. The original
 game treats region 256 (and other multiples of 256) as unvisited, which can split
 connected ground into falsely separate regions and inflate the region count.
@@ -12,9 +34,9 @@ It writes before the moat array on failure and skips the first moat's reservatio
 on success. Two native branch corrections prevent both errors. They preserve the
 existing candidate scoring and do not change which side troops dig from.
 
-This is an experimental implementation, not yet a released or live-validated
-module. Controlled tests execute the original flood fill; the reported saved
-match still needs its own causal check.
+Controlled tests execute the original flood fill. The reported saved match still
+needs its own causal check; this preview does not claim that every stalled worker
+or slow match has the same cause.
 
 The bounds correction was reproduced against both original executables with an
 empty list, no eligible candidate, and valid first/second candidates. Live match

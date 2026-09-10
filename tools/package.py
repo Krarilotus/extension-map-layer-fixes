@@ -17,6 +17,8 @@ def build(destination):
     files = [ROOT / path for path in ('definition.yml','options.yml','init.lua','README.md','CHANGELOG.md','LICENSE')]
     files += sorted((ROOT / 'code').glob('*.lua'))
     files += sorted((ROOT / 'docs').glob('*.md'))
+    files += sorted((ROOT / 'locale').glob('*.md'))
+    files += sorted((ROOT / 'locale').glob('*.yml'))
     with zipfile.ZipFile(archive, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as output:
         for path in sorted(files):
             info = zipfile.ZipInfo(name + '/' + path.relative_to(ROOT).as_posix(), (2026,1,1,0,0,0))
