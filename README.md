@@ -8,7 +8,7 @@ validation are still pending.
 
 ## Install and try it
 
-1. Download `map-layer-fixes-0.1.1.zip` from the newest
+1. Download `map-layer-fixes-0.1.2.zip` from the newest
    [PR preview release](https://github.com/Krarilotus/extension-map-layer-fixes/releases).
    Use the module ZIP, not GitHub's source-code archive.
 2. Import the ZIP with the UCP launcher’s **+** button, enable **Map Layer Fixes**,

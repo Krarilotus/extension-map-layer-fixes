@@ -20,7 +20,7 @@ class PackageTests(unittest.TestCase):
             self.assertEqual(hashlib.sha256(archive.read_bytes()).hexdigest(), expected_hash)
             with zipfile.ZipFile(archive) as content:
                 self.assertIsNone(content.testzip())
-                root = archive.stem + '/'
+                root = ''
                 for name in ('README.md', 'docs/testing.md', 'init.lua', 'definition.yml'):
                     self.assertGreater(len(content.read(root + name)), 20)
                 for language in LANGUAGES:
@@ -32,7 +32,8 @@ class PackageTests(unittest.TestCase):
                         self.assertNotIn('\ufffd', description)
                         # No configurable options: valid empty YAML mappings suffice.
                         self.assertEqual(json.loads(content.read(root + f'locale/{language}.yml')), {})
-                self.assertTrue(all(name.startswith(root) for name in content.namelist()))
+                self.assertIn('definition.yml', content.namelist())
+                self.assertNotIn(archive.stem + '/definition.yml', content.namelist())
                 self.assertFalse(any('/tests/' in name or name.endswith(('.exe', '.sav'))
                                      for name in content.namelist()))
 

@@ -4,7 +4,7 @@ import tempfile
 import unittest
 import zipfile
 from lupa.lua51 import LuaRuntime
-from native_fixture import Native,GAME_DIR,ROOT
+from native_fixture import Native,GAME_DIR
 from tools.package import build
 
 @unittest.skipUnless(GAME_DIR,'Set SHC_GAME_DIR to original 1.41 executable directory')
@@ -15,7 +15,7 @@ class NativeInstallationTests(unittest.TestCase):
             archive=build(destination)
             with zipfile.ZipFile(archive) as content:
                 content.extractall(destination)
-            self.check_variants(destination/archive.stem)
+            self.check_variants(destination)
 
     def check_variants(self,root):
         for filename,region,moat in (

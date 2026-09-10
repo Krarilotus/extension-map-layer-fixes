@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.2 (preview)
+
+- Put definition.yml and init.lua at the ZIP root, as required by UCP discovery.
+- Test native startup from that exact root; reject a nested source-archive layout.
+
 ## 0.1.1 (preview)
 
 - Add launcher descriptions in all nine UCP languages and include them in the ZIP.
