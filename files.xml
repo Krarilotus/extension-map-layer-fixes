@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module>
+  <files>
+    <file src="definition.yml" />
+    <file src="options.yml" />
+    <file src="init.lua" />
+    <file src="README.md" />
+    <file src="CHANGELOG.md" />
+    <file src="LICENSE" />
+    <file src="code/*.lua" target="code" />
+    <file src="docs/*.md" target="docs" />
+    <file src="locale/*.md" target="locale" />
+    <file src="locale/*.yml" target="locale" />
+  </files>
+</module>
