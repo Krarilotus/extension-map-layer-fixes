@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.3 (preview)
+
+- Trace native map/save preparation and document file compatibility separately
+  from replay determinism; no map format or region-capacity change is introduced.
+- Exercise region IDs 256/512/768, stale saved labels, ordinary maps and the
+  unchanged capacity boundary against both original executable variants.
+- Define the runtime file list for the existing UCP store packager. Store builds
+  need no Python and exclude development tools and tests.
+
 ## 0.1.2 (preview)
 
 - Put definition.yml and init.lua at the ZIP root, as required by UCP discovery.

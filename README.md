@@ -8,7 +8,7 @@ validation are still pending.
 
 ## Install and try it
 
-1. Download `map-layer-fixes-0.1.2.zip` from the newest
+1. Download `map-layer-fixes-0.1.3.zip` from the newest
    [PR preview release](https://github.com/Krarilotus/extension-map-layer-fixes/releases).
    Use the module ZIP, not GitHub's source-code archive.
 2. Import the ZIP with the UCP launcher’s **+** button, enable **Map Layer Fixes**,
@@ -21,6 +21,8 @@ available in English, German, French, Russian, Hungarian, Turkish, Chinese,
 Spanish, and Persian. These previews are not yet part of the public extension store.
 
 See [the short test plan](docs/testing.md) before testing an existing save.
+See [map/save/replay compatibility](docs/compatibility.md) for what the unchanged
+file format means, and why old replays must retain their original module setup.
 
 ## What it fixes
 
