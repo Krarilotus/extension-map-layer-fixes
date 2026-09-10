@@ -1,0 +1,9 @@
+name: map-layer-fixes
+display-name: Map Layer Fixes
+version: 0.1.0
+type: module
+author: Krarilotus
+dependencies:
+  framework: ">=3.0.7"
+meta:
+  version: 1.0.0
