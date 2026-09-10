@@ -1,0 +1,93 @@
+name: Publish PR release
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: Pull request number to publish
+        type: number
+        required: true
+permissions:
+  contents: read
+concurrency:
+  group: pr-release-${{ github.event.pull_request.number || inputs.pr }}
+  cancel-in-progress: false
+jobs:
+  resolve:
+    runs-on: ubuntu-latest
+    outputs:
+      number: ${{ steps.pr.outputs.number }}
+      sha: ${{ steps.pr.outputs.sha }}
+      repository: ${{ steps.pr.outputs.repository }}
+    steps:
+      - id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number || inputs.pr }}
+        run: |
+          gh api "repos/$REPO/pulls/$PR" > pr.json
+          python - <<'PY'
+          import json, os, re
+          p=json.load(open('pr.json'))
+          assert re.fullmatch('[0-9a-f]{40}',p['head']['sha'])
+          with open(os.environ['GITHUB_OUTPUT'],'a') as out:
+              out.write(f"number={p['number']}\nsha={p['head']['sha']}\nrepository={p['head']['repo']['full_name']}\n")
+          PY
+  verify:
+    needs: resolve
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ needs.resolve.outputs.repository }}
+          ref: ${{ needs.resolve.outputs.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-dev.txt
+      # PR code executes with a read-only token, no secrets and no shared cache.
+      - run: python -m unittest discover -s tests -v
+      - run: python tools/package.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: module
+          path: |
+            dist/*.zip
+            dist/SHA256SUMS
+          if-no-files-found: error
+  publish:
+    needs: [resolve, verify]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      # Never execute or extract PR-produced files in this privileged job.
+      - uses: actions/download-artifact@v4
+        with:
+          name: module
+          path: candidate
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PR: ${{ needs.resolve.outputs.number }}
+          SHA: ${{ needs.resolve.outputs.sha }}
+        run: |
+          tag="pr-$PR-${SHA:0:12}"
+          printf 'Review build for PR #%s at `%s`.\n\nNative behavior checks require locally owned game executables; CI runs portable installation checks. Live multiplayer acceptance remains required.\n' "$PR" "$SHA" > notes.md
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" candidate/*.zip candidate/SHA256SUMS --clobber
+          else
+            gh release create "$tag" candidate/*.zip candidate/SHA256SUMS --target "$SHA" --prerelease --title "PR #$PR preview" --notes-file notes.md
+          fi
+          url="https://github.com/$GH_REPO/releases/tag/$tag"
+          gh api "repos/$GH_REPO/issues/$PR/comments" --paginate --jq '.[].body' > comments.txt
+          if ! grep -Fq "$url" comments.txt; then
+            printf 'Preview build: %s\n\nThis is a review build, not a claim of completed live multiplayer validation.\n' "$url" > comment.md
+            gh pr comment "$PR" --body-file comment.md
+          fi
