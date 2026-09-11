@@ -10,8 +10,3 @@ meta:
 tags:
 - maps
 - bugfixes
-capabilities:
-  files: false
-  code: true
-  configuration: false
-  options: false
