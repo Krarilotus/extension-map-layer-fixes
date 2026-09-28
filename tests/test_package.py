@@ -47,8 +47,10 @@ class PackageTests(unittest.TestCase):
                         self.assertIn('1.41', description)
                         self.assertIn('3.0.7', description)
                         self.assertNotIn('\ufffd', description)
-                        # No configurable options: valid empty YAML mappings suffice.
-                        self.assertEqual(json.loads(content.read(root + f'locale/{language}.yml')), {})
+                        labels = json.loads(content.read(root + f'locale/{language}.yml'))
+                        self.assertEqual(set(labels), {'tags.maps', 'tags.bugfixes'})
+                        self.assertTrue(all(isinstance(value, str) and value.strip()
+                                            for value in labels.values()))
                 self.assertIn('definition.yml', content.namelist())
                 self.assertNotIn(archive.stem + '/definition.yml', content.namelist())
                 self.assertFalse(any('/tests/' in name or name.endswith(('.exe', '.sav'))
